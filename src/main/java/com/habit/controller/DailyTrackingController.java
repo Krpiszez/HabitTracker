@@ -1,6 +1,7 @@
 package com.habit.controller;
 
 import com.habit.domain.DailyTracking;
+import com.habit.dto.LastTwoDaysTrack;
 import com.habit.dto.RecordForUser;
 import com.habit.dto.response.HTResponses;
 import com.habit.dto.response.ResponseMessages;
@@ -28,6 +29,16 @@ public class DailyTrackingController {
         HTResponses response = new HTResponses(ResponseMessages.DAILY_TRACKING_CHECK_HABIT_MESSAGE, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+    @PostMapping("/yesterday")
+    public ResponseEntity<HTResponses> trackYesterdaysHabit(@RequestParam("habitId") Long habitId,
+                                                  @RequestParam("completed") Boolean completed){
+        dailyTrackingService.trackYesterdaysHabit(habitId, completed);
+        HTResponses response = new HTResponses(ResponseMessages.DAILY_TRACKING_CHECK_HABIT_MESSAGE, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @DeleteMapping
     public ResponseEntity<HTResponses> untrackHabit(@RequestParam("habitId") Long habitId){
@@ -35,6 +46,8 @@ public class DailyTrackingController {
         HTResponses response = new HTResponses(ResponseMessages.DAILY_TRACKING_CHECK_HABIT_MESSAGE, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     @GetMapping
     public ResponseEntity<List<DailyTracking>> getAllTracks(){
@@ -49,6 +62,9 @@ public class DailyTrackingController {
         return ResponseEntity.ok(records);
     }
 
-    @GetMapping
-    public ResponseEntity<List<>>
+    @GetMapping("/auth/user")
+    public ResponseEntity<List<LastTwoDaysTrack>> getLastTwoDays(){
+        List<LastTwoDaysTrack> lastTwoDays = dailyTrackingService.getLastTwoDays();
+        return ResponseEntity.ok(lastTwoDays);
+    }
 }

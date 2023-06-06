@@ -3,6 +3,7 @@ package com.habit.service;
 import com.habit.domain.DailyTracking;
 import com.habit.domain.Habit;
 import com.habit.domain.User;
+import com.habit.dto.LastTwoDaysTrack;
 import com.habit.dto.RecordForUser;
 import com.habit.exception.ResourceNotFoundException;
 import com.habit.exception.errormessages.ErrorMessages;
@@ -32,6 +33,17 @@ public class DailyTrackingService {
         trackedHabit.setHabit(habitService.getHabitById(habitId));
         trackedHabit.setUser(userService.getCurrentUser());
         trackedHabit.setDate(LocalDate.now());
+        trackedHabit.setCompleted(completed);
+
+        dailyTrackingRepository.save(trackedHabit);
+    }
+
+    public void trackYesterdaysHabit(Long habitId, Boolean completed) {
+
+        DailyTracking trackedHabit = new DailyTracking();
+        trackedHabit.setHabit(habitService.getHabitById(habitId));
+        trackedHabit.setUser(userService.getCurrentUser());
+        trackedHabit.setDate(LocalDate.now().minusDays(1));
         trackedHabit.setCompleted(completed);
 
         dailyTrackingRepository.save(trackedHabit);
@@ -76,4 +88,22 @@ public class DailyTrackingService {
                 ()->{throw new ResourceNotFoundException("Track Not Found!");}
         );
     }
+
+    public List<LastTwoDaysTrack> getLastTwoDays() {
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        List<DailyTracking> lastTwoDays = dailyTrackingRepository.findAllByDate(today, yesterday);
+        List<LastTwoDaysTrack> lastTwoDaysTracks = new ArrayList<>();
+        for (DailyTracking d: lastTwoDays){
+            if (d.getUser().getUserName().equalsIgnoreCase("mustafa") || d.getUser().getUserName().equalsIgnoreCase("faruk") ||
+                    d.getUser().getUserName().equalsIgnoreCase("mehmet") ||d.getUser().getUserName().equalsIgnoreCase("enes") ||
+                    d.getUser().getUserName().equalsIgnoreCase("omer") ||d.getUser().getUserName().equalsIgnoreCase("ahmet")) {
+                LastTwoDaysTrack el = new LastTwoDaysTrack(d.getId(), d.getUser(), d.getHabit(), d.getDate(), d.isCompleted());
+                lastTwoDaysTracks.add(el);
+            }
+        }
+        return lastTwoDaysTracks;
+    }
+
+
 }
