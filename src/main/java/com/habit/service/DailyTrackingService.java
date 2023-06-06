@@ -74,12 +74,14 @@ public class DailyTrackingService {
     }
 
     public void untrackHabit(Long habitId) {
-        DailyTracking dailyTracking = getTrackByHabitId(habitId);
+        User curUser = userService.getCurrentUser();
+        DailyTracking dailyTracking = getTrackByHabitId(habitId, curUser);
         dailyTrackingRepository.delete(dailyTracking);
     }
 
     public void untrackYesterdaysHabit(Long habitId) {
-        DailyTracking dailyTracking = getYesterdaysTrackByHabitId(habitId);
+        User curUser = userService.getCurrentUser();
+        DailyTracking dailyTracking = getYesterdaysTrackByHabitId(habitId, curUser);
         dailyTrackingRepository.delete(dailyTracking);
     }
     public DailyTracking getTrackById(Long id){
@@ -87,16 +89,16 @@ public class DailyTrackingService {
                 ()->{throw new ResourceNotFoundException("Track Not Found!");}
         );
     }
-    public DailyTracking getTrackByHabitId(Long habitId){
+    public DailyTracking getTrackByHabitId(Long habitId, User user){
         LocalDate date = LocalDate.now();
-        return dailyTrackingRepository.findByHabitIdAndDate(habitId, date).orElseThrow(
+        return dailyTrackingRepository.findByHabitIdAndDateAndUser(habitId, date, user).orElseThrow(
                 ()->{throw new ResourceNotFoundException("Track Not Found!");}
         );
     }
 
-    public DailyTracking getYesterdaysTrackByHabitId(Long habitId){
+    public DailyTracking getYesterdaysTrackByHabitId(Long habitId, User user){
         LocalDate date = LocalDate.now().minusDays(1);
-        return dailyTrackingRepository.findByHabitIdAndDate(habitId, date).orElseThrow(
+        return dailyTrackingRepository.findByHabitIdAndDateAndUser(habitId, date, user).orElseThrow(
                 ()->{throw new ResourceNotFoundException("Track Not Found!");}
         );
     }

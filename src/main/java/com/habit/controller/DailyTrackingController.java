@@ -48,7 +48,7 @@ public class DailyTrackingController {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
-    @DeleteMapping
+    @DeleteMapping("/yesterday")
     public ResponseEntity<HTResponses> untrackYesterdaysHabit(@RequestParam("habitId") Long habitId){
         dailyTrackingService.untrackYesterdaysHabit(habitId);
         HTResponses response = new HTResponses(ResponseMessages.DAILY_TRACKING_CHECK_HABIT_MESSAGE, true);

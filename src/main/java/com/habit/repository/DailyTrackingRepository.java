@@ -15,7 +15,7 @@ public interface DailyTrackingRepository extends JpaRepository<DailyTracking, Lo
     @Query("select d from DailyTracking d join d.user u where u.id=:userId")
     List<DailyTracking> findAllByUserId(@Param("userId") Long userId);
 
-    Optional<DailyTracking> findByHabitIdAndDate(Long habitId, LocalDate date);
+    Optional<DailyTracking> findByHabitIdAndDateAndUser(Long habitId, LocalDate date, User user);
 
     @Query("select d from DailyTracking d where d.date=:today or d.date=:yesterday")
     List<DailyTracking> findAllByDate(@Param("today") LocalDate today, @Param("yesterday") LocalDate yesterday);
