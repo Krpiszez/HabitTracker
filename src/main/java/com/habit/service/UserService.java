@@ -155,7 +155,9 @@ public class UserService {
     public void addHabitToCurrentUser(Long habitId) {
         User user = getCurrentUser();
         Habit habit = habitService.getHabitById(habitId);
-        user.getHabits().add(habit);
+        Set<Habit> userHabits = user.getHabits();
+        userHabits.add(habit);
+        user.setHabits(userHabits);
         userRepository.save(user);
     }
 
